@@ -5,38 +5,99 @@
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.note-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  margin-bottom: 3rem;
+  border-bottom: 1px solid var(--text-400);
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.note-app {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.note-form {
+  gap: 1.5rem;
+  display: grid;
 }
 
-.card {
-  padding: 2em;
+.add-new-note {
+  width: 30%;
 }
 
-.read-the-docs {
-  color: #888;
+.note-container {
+  width: 60%;
+}
+
+.note-status {
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-400);
+  margin-bottom: 2rem;
+}
+
+.note-status span {
+  border-radius: 2rem;
+  display: inline-block;
+  background-color: var(--text-400);
+  padding: 0.2rem 0.3rem;
+  font-size: 0.75rem;
+  color: var(--text-100);
+}
+
+.note-item {
+  padding: 1rem;
+  background-color: #fff;
+  border-radius: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.note-item__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.3rem;
+  margin-bottom: 0.3rem;
+  border-bottom: 1px solid var(--text-100);
+}
+
+.note-item.completed .title {
+  text-decoration: line-through;
+}
+
+.note-item.completed {
+  opacity: 80%;
+}
+
+.note-item__header .title {
+  font-size: 1.1rem;
+  color: var(--text-700);
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.note-item__header .desc {
+  color: var(--text-400);
+  margin-bottom: 0.5rem;
+  font-weight: 300;
+}
+
+.note-item__header .actions {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.note-item__header .trash {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--rose-500);
+  background: none;
+}
+
+.note-item__footer {
+  color: var(--text-300);
 }

@@ -1,35 +1,93 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./App.css";
+import { useReducer, useState } from "react";
+import AddNewNote from "./components/AddNewNote";
+import Header from "./components/Header";
+import NotesList from "./components/NotesList";
+import NoteStatus from "./components/NoteStatus";
+import { Note } from "./types/Note";
+import { SortByType } from "./types/SortByType";
 
-function App() {
-  const [count, setCount] = useState(0)
+type Action =
+  | { type: "add"; payload: Note }
+  | { type: "delete"; payload: number }
+  | { type: "complete"; payload: number };
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+/// notes is an array including objects that has properties of the notes, so Note[]
+function noteReducer(notes: Note[], action: Action) {
+  switch (action.type) {
+    case "add": {
+      let newNotes = [...notes, action.payload];
+      localStorage.setItem("notes", JSON.stringify(newNotes));
+      return newNotes;
+    }
+    case "delete": {
+      let newNotes = notes.filter((note) => note.id !== action.payload);
+      localStorage.setItem("notes", JSON.stringify(newNotes));
+      return newNotes;
+    }
+    case "complete": {
+      let newNotes = notes.map((note) => {
+        return note.id === action.payload
+          ? { ...note, completed: !note.completed }
+          : note;
+      });
+      localStorage.setItem("notes", JSON.stringify(newNotes));
+      return newNotes;
+    }
+    default:
+      throw new Error("Unknown error");
+  }
 }
 
-export default App
+function App() {
+  const [notes, dispatch] = useReducer(
+    noteReducer,
+    JSON.parse(localStorage.getItem("notes") ?? "[]") as Note[]
+  );
+
+  /* 
+  Calls localStorage.getItem only once, so Cleaner and more readable.
+  By using the ?? operator, you convert null to a valid fallback value ("[]"), which is always a string.
+  This ensures JSON.parse only receives valid input and avoids runtime errors.
+  localStorage.getItem returns string | null.
+  The ?? (nullish coalescing operator) provides a cleaner way to handle null values:
+  If localStorage.getItem("notes") is null, it substitutes "[]".
+  as Note[]: Ensures the parsed value matches the expected type.
+  */
+
+  const handleAddNotes = (newNote: Note) => {
+    dispatch({ type: "add", payload: newNote });
+  };
+  const handleDelete = (id: number) => {
+    dispatch({ type: "delete", payload: id });
+  };
+  const handleCheckBox = (id: number) => {
+    dispatch({ type: "complete", payload: id });
+  };
+  // sort notes
+  const [sortBy, setSortBy] = useState<SortByType>("latest");
+
+  return (
+    <div className="component">
+      <Header
+        notes={notes}
+        sortBy={sortBy}
+        setSortBy={(value) => setSortBy(value)}
+      />
+      <div className="note-app">
+        <AddNewNote onAddNote={handleAddNotes} />
+        <div className="note-container">
+          <NoteStatus notes={notes} />
+          <NotesList
+            notes={notes}
+            handleDelete={handleDelete}
+            handleCheckBox={handleCheckBox}
+            sortBy={sortBy}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default App;
